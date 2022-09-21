@@ -1,0 +1,216 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.1:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "AddressID",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"type": "Int32",
+									"physicalType": "int",
+									"ordinal": 1
+								}
+							},
+							{
+								"source": {
+									"name": "AddressLine1",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "nvarchar",
+									"ordinal": 2
+								}
+							},
+							{
+								"source": {
+									"name": "AddressLine2",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "nvarchar",
+									"ordinal": 3
+								}
+							},
+							{
+								"source": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "nvarchar",
+									"ordinal": 4
+								}
+							},
+							{
+								"source": {
+									"name": "StateProvince",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "nvarchar",
+									"ordinal": 5
+								}
+							},
+							{
+								"source": {
+									"name": "CountryRegion",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "nvarchar",
+									"ordinal": 6
+								}
+							},
+							{
+								"source": {
+									"name": "PostalCode",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "nvarchar",
+									"ordinal": 7
+								}
+							},
+							{
+								"source": {
+									"name": "rowguid",
+									"type": "Guid",
+									"physicalType": "uniqueidentifier"
+								},
+								"sink": {
+									"type": "Guid",
+									"physicalType": "uniqueidentifier",
+									"ordinal": 8
+								}
+							},
+							{
+								"source": {
+									"name": "ModifiedDate",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								},
+								"sink": {
+									"type": "DateTime",
+									"physicalType": "datetime",
+									"ordinal": 9
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Sourcetable",
+						"type": "DatasetReference",
+						"parameters": {
+							"Databse": "adf",
+							"TableNAme": {
+								"value": "@pipeline().parameters.tabM",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Delete1",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"parameters": {
+			"tabM": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-15T09:12:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

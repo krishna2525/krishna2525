@@ -1,0 +1,9 @@
+{
+	"name": "samplework",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ec00a22a-fc87-48fb-85c2-bcda0f0f5453",
+		"tenantId": "e849fad2-17a1-448b-9bf2-bc5ec2a447cd"
+	}
+}
